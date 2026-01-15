@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Git Clone') {
+            steps {
+                git branch: 'main',
+                url: 'https://github.com/<username>/devops-docker-project.git'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh 'docker build -t devops-web .'
+            }
+        }
+
+        stage('Docker Run') {
+            steps {
+                sh '''
+                docker rm -f web1 || true
+                docker run -d -p 8080:80 --name web1 devops-web
+                '''
+            }
+        }
+    }
+}
